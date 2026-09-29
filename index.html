@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SongShelter Premium</title>
+    <title>SongShelter</title>
     <!-- Fonte Inter Moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- JSMediaTags para ler capas de MP3 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    
+    <!-- IDB-Keyval para salvar a permissão da pasta no navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+
     <style>
         :root {
             --primary: #8a2be2;
@@ -35,7 +40,6 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow: hidden;
-            /* Background animado e premium */
             background: radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 50%),
                         radial-gradient(circle at 85% 30%, rgba(102, 252, 241, 0.1), transparent 50%),
                         var(--bg-dark);
@@ -60,6 +64,7 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 40px var(--primary-glow);
             letter-spacing: -1px;
+            text-align: center;
         }
 
         #screen-load p {
@@ -73,10 +78,13 @@
 
         .upload-wrapper {
             position: relative;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
-        .btn-premium {
+        .btn- {
             background: linear-gradient(45deg, var(--primary), #5a189a);
             color: white;
             border: none;
@@ -92,26 +100,39 @@
             gap: 10px;
         }
 
-        .btn-premium:hover {
+        .btn-:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 15px 40px var(--primary-glow);
             filter: brightness(1.2);
         }
 
-        #folder-input {
-            position: absolute; left: 0; top: 0; width: 100%; height: 100%;
-            opacity: 0; cursor: pointer;
+        .btn-success {
+            background: linear-gradient(45deg, #1db954, #128c3c);
+            box-shadow: 0 10px 30px rgba(29, 185, 84, 0.3);
         }
+
+        .btn-success:hover {
+            box-shadow: 0 15px 40px rgba(29, 185, 84, 0.5);
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .hint-text:hover { color: #fff; }
 
         /* DASHBOARD PRINCIPAL */
         #screen-dash {
             display: none;
             width: 100%;
-            height: calc(100% - 90px); /* 90px is player bar */
+            height: calc(100% - 90px);
             flex-direction: row;
         }
 
-        /* SIDEBAR (PLAYLISTS) */
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-width);
             height: 100%;
@@ -162,9 +183,7 @@
             gap: 10px;
         }
 
-        .playlist-item svg {
-            width: 18px; height: 18px;
-        }
+        .playlist-item svg { width: 18px; height: 18px; }
 
         .playlist-item:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -224,7 +243,6 @@
             padding: 20px 40px 40px;
         }
 
-        /* Custom Scrollbar */
         .content-area::-webkit-scrollbar, .sidebar::-webkit-scrollbar { width: 8px; }
         .content-area::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track { background: transparent; }
         .content-area::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
@@ -278,9 +296,7 @@
             transition: transform 0.5s ease;
         }
         
-        .card:hover .card-img {
-            transform: scale(1.05);
-        }
+        .card:hover .card-img { transform: scale(1.05); }
 
         .card-placeholder {
             font-size: 3rem;
@@ -319,9 +335,7 @@
             text-overflow: ellipsis;
         }
         
-        .card.playing .card-title {
-            color: var(--secondary);
-        }
+        .card.playing .card-title { color: var(--secondary); }
 
         .card-artist {
             font-size: 0.85rem;
@@ -346,7 +360,6 @@
             z-index: 50;
         }
 
-        /* Lado esquerdo: Capa e info */
         .player-now-playing {
             display: flex;
             align-items: center;
@@ -377,7 +390,6 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        /* Centro: Controles e Progresso */
         .player-controls-container {
             width: 40%;
             display: flex; flex-direction: column; align-items: center;
@@ -406,7 +418,6 @@
             font-size: 0.75rem; color: var(--text-sub);
         }
 
-        /* Inputs de Range Customizados */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -434,15 +445,12 @@
             border-radius: 50%;
             background: #fff;
             margin-top: -3.5px;
-            opacity: 0; /* esconde até hover */
+            opacity: 0;
             transition: opacity 0.2s;
         }
 
-        input[type=range]:hover::-webkit-slider-thumb {
-            opacity: 1;
-        }
+        input[type=range]:hover::-webkit-slider-thumb { opacity: 1; }
 
-        /* Lado Direito: Volume */
         .player-volume {
             width: 30%;
             display: flex; align-items: center; justify-content: flex-end; gap: 10px;
@@ -451,7 +459,6 @@
         
         #volume-slider { width: 100px; }
 
-        /* Loader */
         .loader-text {
             font-size: 1.2rem; font-weight: 500; color: var(--secondary);
             margin-top: 20px; text-align: center;
@@ -462,19 +469,30 @@
 </head>
 <body>
 
-    <!-- TELA 1: SELEÇÃO DE PASTA -->
+    <!-- TELA 1: SELEÇÃO/RECONEXÃO DE PASTA DO CARTÃO SD -->
     <div id="screen-load">
-        <h1>SongShelter Premium</h1>
-        <p>A experiência de áudio 100% local, privada e ultrarrápida. Suas subpastas se transformarão magicamente em Playlists.</p>
+        <h1>SongShelter </h1>
+        <p>A experiência de áudio 100% local, privada e ultrarrápida.<br>Suas subpastas do Cartão SD se transformarão em Playlists.</p>
         
-        <div class="upload-wrapper">
-            <button class="btn-premium">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                Selecionar Pasta Local
+        <div class="upload-wrapper" id="upload-buttons">
+            <!-- Botão padrão (Primeira vez ou Nova Pasta) -->
+            <button class="btn-" id="btn-new-folder" onclick="selectNewFolder()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                Selecionar Cartão SD
             </button>
-            <input type="file" id="folder-input" webkitdirectory directory multiple onchange="handleFolderSelect(event)">
+
+            <!-- Botão de reconexão (Próximas vezes) -->
+            <button class="btn- btn-success" id="btn-reconnect" onclick="reconnectFolder()" style="display: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 2v6h6"></path></svg>
+                Reconectar Músicas Salvas
+            </button>
+            
+            <div id="reconnect-hint" class="hint-text" style="display: none;" onclick="selectNewFolder()">
+                Ou escolher um diretório diferente
+            </div>
         </div>
-        <div id="loading-msg" class="loader-text" style="display:none;">Lendo pastas e extraindo capas em alta qualidade...</div>
+        
+        <div id="loading-msg" class="loader-text" style="display:none;">Lendo áudios e extraindo metadados...</div>
     </div>
 
     <!-- TELA 2: DASHBOARD -->
@@ -492,16 +510,14 @@
             </ul>
             
             <div class="sidebar-section" style="margin-top: 30px;">Suas Pastas</div>
-            <ul class="playlist-list" id="sidebar-playlists">
-                <!-- Playlists dinâmicas entram aqui -->
-            </ul>
+            <ul class="playlist-list" id="sidebar-playlists"></ul>
         </div>
 
         <!-- MAIN AREA -->
         <div class="main-content">
             <div class="header">
                 <h2 id="main-title">Todas as Músicas</h2>
-                <button class="btn-outline" onclick="location.reload()">Alterar Pasta Raiz</button>
+                <button class="btn-outline" onclick="location.reload()">Sair / Trocar Pasta</button>
             </div>
             
             <div class="content-area">
@@ -513,7 +529,6 @@
 
     <!-- BARRA DO PLAYER -->
     <div class="player-bar" id="player-bar" style="display:none;">
-        <!-- Esquerda -->
         <div class="player-now-playing">
             <img id="player-cover" class="player-cover" src="" alt="Capa" style="display: none;">
             <div id="player-cover-placeholder" class="player-cover" style="display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.2); font-size:24px;">♪</div>
@@ -523,17 +538,16 @@
             </div>
         </div>
 
-        <!-- Centro -->
         <div class="player-controls-container">
             <div class="player-buttons">
-                <button class="control-btn" onclick="playPrev()">
+                <button class="control-btn" onclick="playPrev()" title="Anterior">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
                 </button>
-                <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlay()">
+                <button class="play-pause-btn" id="btn-play-pause" onclick="togglePlay()" title="Play/Pause (Espaço)">
                     <svg id="icon-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left:4px;"><path d="M8 5v14l11-7z"/></svg>
                     <svg id="icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                 </button>
-                <button class="control-btn" onclick="playNext()">
+                <button class="control-btn" onclick="playNext()" title="Próxima">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                 </button>
             </div>
@@ -544,7 +558,6 @@
             </div>
         </div>
 
-        <!-- Direita -->
         <div class="player-volume">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
             <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" oninput="changeVolume(event)">
@@ -555,14 +568,13 @@
     <audio id="audio-engine" preload="metadata"></audio>
 
     <script>
-        // ESTADO GLOBAL DA APLICAÇÃO
-        let library = []; // [{id, file, title, artist, cover, playlist}]
-        let currentPlaylistContext = []; // A fila atual de reprodução
-        let currentTrackIndex = -1; // Index dentro do currentPlaylistContext
+        let library = [];
+        let currentPlaylistContext = [];
+        let currentTrackIndex = -1;
         let isPlaying = false;
         let currentView = "Todas as Músicas";
+        let currentObjectUrl = null;
 
-        // ELEMENTOS DOM
         const audioElement = document.getElementById('audio-engine');
         const grid = document.getElementById('song-grid');
         const iconPlay = document.getElementById('icon-play');
@@ -574,45 +586,99 @@
         const mainTitle = document.getElementById('main-title');
         
         const jsmediatags = window.jsmediatags;
+        const supportedExtensions = ['.mp3', '.m4a', '.wav', '.ogg', '.flac', '.aac', '.opus'];
 
-        // 1. IMPORTAÇÃO E LEITURA INTELIGENTE DE PASTAS
-        async function handleFolderSelect(event) {
-            const files = event.target.files;
-            if (files.length === 0) return;
+        // 1. INICIALIZAÇÃO E MEMÓRIA DE DIRETÓRIO (INDEXEDDB)
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const savedHandle = await idbKeyval.get('songshelter-sd-handle');
+                if (savedHandle) {
+                    document.getElementById('btn-new-folder').style.display = 'none';
+                    document.getElementById('btn-reconnect').style.display = 'flex';
+                    document.getElementById('reconnect-hint').style.display = 'block';
+                }
+            } catch (e) {
+                console.error("IndexedDB indisponível ou bloqueado", e);
+            }
+        });
 
-            document.querySelector('.upload-wrapper').style.display = 'none';
+        async function selectNewFolder() {
+            try {
+                // Abre o popup do navegador para selecionar a pasta (File System Access API)
+                const handle = await window.showDirectoryPicker();
+                await idbKeyval.set('songshelter-sd-handle', handle);
+                await processDirectoryHandle(handle);
+            } catch (err) {
+                console.log("Seleção de pasta cancelada pelo usuário.");
+            }
+        }
+
+        async function reconnectFolder() {
+            try {
+                const handle = await idbKeyval.get('songshelter-sd-handle');
+                if (!handle) return;
+
+                // Solicita permissão de leitura se o navegador exigir
+                const options = { mode: 'read' };
+                let permission = await handle.queryPermission(options);
+                if (permission !== 'granted') {
+                    permission = await handle.requestPermission(options);
+                }
+
+                if (permission === 'granted') {
+                    await processDirectoryHandle(handle);
+                }
+            } catch (err) {
+                console.error("Erro ao reconectar pasta", err);
+                alert("Não foi possível reconectar a pasta automaticamente. Por favor, selecione-a novamente.");
+                idbKeyval.del('songshelter-sd-handle');
+                location.reload();
+            }
+        }
+
+        // 2. PROCESSAMENTO E LEITURA DE ARQUIVOS
+        async function processDirectoryHandle(dirHandle) {
+            document.getElementById('upload-buttons').style.display = 'none';
             document.getElementById('loading-msg').style.display = 'block';
 
             library = [];
+            let audioFiles = [];
 
-            // Filtra áudios
-            const audioFiles = Array.from(files).filter(f => f.name.toLowerCase().endsWith('.mp3') || f.name.toLowerCase().endsWith('.m4a'));
+            // Varredura recursiva de pastas
+            async function scanDirectory(handle, currentPath) {
+                for await (const entry of handle.values()) {
+                    if (entry.kind === 'file') {
+                        const ext = entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase();
+                        if (supportedExtensions.includes(ext)) {
+                            const file = await entry.getFile();
+                            audioFiles.push({ file, path: currentPath });
+                        }
+                    } else if (entry.kind === 'directory') {
+                        await scanDirectory(entry, `${currentPath}/${entry.name}`);
+                    }
+                }
+            }
+
+            await scanDirectory(dirHandle, dirHandle.name);
 
             if (audioFiles.length === 0) {
-                alert("Nenhuma música encontrada nesta pasta.");
+                alert("Nenhuma música compatível encontrada nesta pasta.");
                 location.reload();
                 return;
             }
 
-            const processPromises = audioFiles.map((file, index) => {
+            // Extração de Metadados (jsmediatags)
+            const processPromises = audioFiles.map((item, index) => {
                 return new Promise((resolve) => {
-                    // Extração inteligente de Playlist usando o caminho do arquivo
-                    // file.webkitRelativePath = "Musicas/Treino/Bomba.mp3"
-                    const pathParts = file.webkitRelativePath.split('/');
-                    let playlistName = "Músicas Avulsas"; 
-                    if (pathParts.length > 2) {
-                        // O nome da pasta imediatamente antes do arquivo
-                        playlistName = pathParts[pathParts.length - 2];
-                    }
+                    const pathParts = item.path.split('/');
+                    let playlistName = pathParts.length > 1 ? pathParts[pathParts.length - 1] : "Músicas Avulsas";
+                    const fallbackTitle = item.file.name.replace(/\.[^/.]+$/, "");
 
-                    const fallbackTitle = file.name.replace(/\.[^/.]+$/, "");
-                    
-                    if (jsmediatags) {
-                        jsmediatags.read(file, {
+                    if (jsmediatags && (item.file.name.endsWith('.mp3') || item.file.name.endsWith('.m4a'))) {
+                        jsmediatags.read(item.file, {
                             onSuccess: function(tag) {
                                 const tags = tag.tags;
                                 let coverUrl = null;
-                                
                                 if (tags.picture) {
                                     let base64String = "";
                                     for (let i = 0; i < tags.picture.data.length; i++) {
@@ -620,35 +686,23 @@
                                     }
                                     coverUrl = `data:${tags.picture.format};base64,${window.btoa(base64String)}`;
                                 }
-                                
-                                resolve({
-                                    id: index,
-                                    file: file,
-                                    title: tags.title || fallbackTitle,
-                                    artist: tags.artist || 'Artista Desconhecido',
-                                    cover: coverUrl,
-                                    playlist: playlistName
-                                });
+                                resolve({ id: index, file: item.file, title: tags.title || fallbackTitle, artist: tags.artist || 'Desconhecido', cover: coverUrl, playlist: playlistName });
                             },
                             onError: function() {
-                                resolve({ id: index, file: file, title: fallbackTitle, artist: 'Artista Desconhecido', cover: null, playlist: playlistName });
+                                resolve({ id: index, file: item.file, title: fallbackTitle, artist: 'Desconhecido', cover: null, playlist: playlistName });
                             }
                         });
                     } else {
-                        resolve({ id: index, file: file, title: fallbackTitle, artist: 'Artista Desconhecido', cover: null, playlist: playlistName });
+                        resolve({ id: index, file: item.file, title: fallbackTitle, artist: 'Desconhecido', cover: null, playlist: playlistName });
                     }
                 });
             });
 
             library = await Promise.all(processPromises);
 
-            // Popula a Sidebar
             renderSidebar();
-
-            // Renderiza "Todas as Músicas" por padrão
             switchPlaylist("Todas as Músicas");
 
-            // Muda de tela
             setTimeout(() => {
                 document.getElementById('screen-load').style.display = 'none';
                 document.getElementById('screen-dash').style.display = 'flex';
@@ -657,11 +711,9 @@
             }, 500);
         }
 
-        // 2. RENDEREZAÇÃO DA SIDEBAR E GRID
+        // 3. RENDERIZAÇÃO DE UI
         function renderSidebar() {
-            // Pega todos os nomes únicos de playlists
             const uniquePlaylists = [...new Set(library.map(s => s.playlist))].sort();
-            
             sidebarPlaylists.innerHTML = '';
             
             uniquePlaylists.forEach(pl => {
@@ -680,7 +732,6 @@
             currentView = playlistName;
             mainTitle.innerText = playlistName;
             
-            // Atualiza active state na sidebar
             document.querySelectorAll('.playlist-item').forEach(el => {
                 if (el.innerText.trim() === playlistName) {
                     el.classList.add('active');
@@ -689,20 +740,13 @@
                 }
             });
 
-            // Filtra biblioteca
-            let viewList = [];
-            if (playlistName === "Todas as Músicas") {
-                viewList = library;
-            } else {
-                viewList = library.filter(s => s.playlist === playlistName);
-            }
+            let viewList = (playlistName === "Todas as Músicas") 
+                ? library 
+                : library.filter(s => s.playlist === playlistName);
 
-            // Renderiza o grid
             grid.innerHTML = '';
             viewList.forEach(song => {
                 const card = document.createElement('div');
-                
-                // Se esta é a música atual tocando, adiciona a classe playing
                 const isCurrentlyPlaying = (currentPlaylistContext[currentTrackIndex]?.id === song.id);
                 card.className = `card ${isCurrentlyPlaying ? 'playing' : ''}`;
                 card.id = `card-${song.id}`;
@@ -713,15 +757,13 @@
                     : `<div class="card-placeholder">♪</div>`;
 
                 const playIcon = isCurrentlyPlaying && isPlaying 
-                    ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>` // Pause icon
-                    : `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left:3px;"><path d="M8 5v14l11-7z"/></svg>`; // Play icon
+                    ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+                    : `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left:3px;"><path d="M8 5v14l11-7z"/></svg>`;
 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         ${coverHtml}
-                        <div class="card-play-btn">
-                            ${playIcon}
-                        </div>
+                        <div class="card-play-btn">${playIcon}</div>
                     </div>
                     <div class="card-title" title="${song.title}">${song.title}</div>
                     <div class="card-artist" title="${song.artist}">${song.artist}</div>
@@ -730,18 +772,15 @@
             });
         }
 
-        // 3. SISTEMA DE REPRODUÇÃO E FILA INTELIGENTE
+        // 4. LÓGICA DO PLAYER
         function playSongFromView(songId, contextList) {
-            // Se clicou na que já está tocando, pausa ou dá play
             if (currentPlaylistContext[currentTrackIndex]?.id === songId) {
                 togglePlay();
                 return;
             }
 
-            // Atualiza a Fila de Reprodução para a tela atual
             currentPlaylistContext = [...contextList];
             currentTrackIndex = currentPlaylistContext.findIndex(s => s.id === songId);
-            
             executePlay();
         }
 
@@ -749,8 +788,13 @@
             const song = currentPlaylistContext[currentTrackIndex];
             if (!song) return;
 
-            const objectUrl = URL.createObjectURL(song.file);
-            audioElement.src = objectUrl;
+            // Limpa a URL antiga para liberar Memória RAM
+            if (currentObjectUrl) {
+                URL.revokeObjectURL(currentObjectUrl);
+            }
+
+            currentObjectUrl = URL.createObjectURL(song.file);
+            audioElement.src = currentObjectUrl;
             audioElement.play();
             
             updatePlayerUI(song);
@@ -759,10 +803,7 @@
 
         function togglePlay() {
             if (currentPlaylistContext.length === 0) {
-                // Se a fila tá vazia, pega o primeiro da tela atual
-                if (library.length > 0) {
-                    playSongFromView(library[0].id, library);
-                }
+                if (library.length > 0) playSongFromView(library[0].id, library);
                 return;
             }
 
@@ -776,18 +817,14 @@
         function playNext() {
             if (currentPlaylistContext.length === 0) return;
             currentTrackIndex++;
-            if (currentTrackIndex >= currentPlaylistContext.length) {
-                currentTrackIndex = 0; // Volta pro começo da fila
-            }
+            if (currentTrackIndex >= currentPlaylistContext.length) currentTrackIndex = 0;
             executePlay();
         }
 
         function playPrev() {
             if (currentPlaylistContext.length === 0) return;
             currentTrackIndex--;
-            if (currentTrackIndex < 0) {
-                currentTrackIndex = currentPlaylistContext.length - 1;
-            }
+            if (currentTrackIndex < 0) currentTrackIndex = currentPlaylistContext.length - 1;
             executePlay();
         }
 
@@ -809,14 +846,12 @@
         }
 
         function refreshGridActiveState() {
-            // Remove 'playing' de todos os cards
             document.querySelectorAll('.card').forEach(c => {
                 c.classList.remove('playing');
                 const btn = c.querySelector('.card-play-btn');
                 if (btn) btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left:3px;"><path d="M8 5v14l11-7z"/></svg>`;
             });
 
-            // Adiciona no card atual (se ele estiver visível na view)
             const currentSong = currentPlaylistContext[currentTrackIndex];
             if (currentSong) {
                 const activeCard = document.getElementById(`card-${currentSong.id}`);
@@ -830,7 +865,7 @@
             }
         }
 
-        // 4. EVENTOS DO AUDIO ELEMENT
+        // 5. EVENTOS DO ÁUDIO E CONTROLES
         audioElement.addEventListener('play', () => {
             isPlaying = true;
             iconPlay.style.display = 'none';
@@ -847,13 +882,9 @@
 
         audioElement.addEventListener('timeupdate', () => {
             if (!audioElement.duration) return;
-            const current = audioElement.currentTime;
-            const duration = audioElement.duration;
-            
-            progressBar.max = duration;
-            progressBar.value = current;
-            
-            timeCurrent.innerText = formatTime(current);
+            progressBar.max = audioElement.duration;
+            progressBar.value = audioElement.currentTime;
+            timeCurrent.innerText = formatTime(audioElement.currentTime);
         });
 
         audioElement.addEventListener('loadedmetadata', () => {
@@ -861,26 +892,50 @@
         });
 
         audioElement.addEventListener('ended', () => {
-            playNext(); // Auto play next
+            playNext();
         });
 
-        // 5. INTERAÇÕES DE UI (Seek e Volume)
         function seekAudio(e) {
-            const seekTime = e.target.value;
-            audioElement.currentTime = seekTime;
+            audioElement.currentTime = e.target.value;
         }
 
         function changeVolume(e) {
             audioElement.volume = e.target.value;
         }
 
-        // Helpers
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
+
+        // ATALHOS DE TECLADO
+        document.addEventListener('keydown', (e) => {
+            // Previne atalhos se o usuário estiver focado no input range (slider)
+            if (document.activeElement.tagName === 'INPUT') return;
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            } else if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                audioElement.currentTime = Math.min(audioElement.duration || 0, audioElement.currentTime + 5);
+            } else if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                audioElement.currentTime = Math.max(0, audioElement.currentTime - 5);
+            } else if (e.code === 'ArrowUp') {
+                e.preventDefault();
+                const volSlider = document.getElementById('volume-slider');
+                audioElement.volume = Math.min(1, audioElement.volume + 0.05);
+                volSlider.value = audioElement.volume;
+            } else if (e.code === 'ArrowDown') {
+                e.preventDefault();
+                const volSlider = document.getElementById('volume-slider');
+                audioElement.volume = Math.max(0, audioElement.volume - 0.05);
+                volSlider.value = audioElement.volume;
+            }
+        });
     </script>
 </body>
 </html>
