@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SongShelter Premium</title>
+    <title>SongShelter</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- JSMediaTags para ler apenas Titulo/Artista (sem capas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
@@ -37,12 +37,12 @@
         }
         #screen-load h1 { font-size: 3rem; font-weight: 800; margin-bottom: 10px; color: #fff; }
         #screen-load p { color: var(--text-sub); margin-bottom: 40px; }
-        .btn-premium {
+        .btn- {
             background: #fff; color: #000; border: none; padding: 15px 30px;
             font-size: 1rem; font-weight: 700; border-radius: 30px; cursor: pointer;
             transition: transform 0.2s; display: flex; align-items: center; gap: 10px;
         }
-        .btn-premium:hover { transform: scale(1.05); }
+        .btn-:hover { transform: scale(1.05); }
 
         /* INTERFACE PRINCIPAL */
         #screen-dash { display: none; width: 100%; height: calc(100% - 90px); flex-direction: row; }
@@ -167,8 +167,8 @@
     <div id="screen-load">
         <h1>SongShelter</h1>
         <p>A tua biblioteca de música local organizada e rápida.</p>
-        <button class="btn-premium" id="btn-new-folder" onclick="selectNewFolder()">Selecionar Pasta de Músicas</button>
-        <button class="btn-premium" id="btn-reconnect" onclick="reconnectFolder()" style="display: none; margin-top: 10px;">Reconectar Pasta Guardada</button>
+        <button class="btn-" id="btn-new-folder" onclick="selectNewFolder()">Selecionar Pasta de Músicas</button>
+        <button class="btn-" id="btn-reconnect" onclick="reconnectFolder()" style="display: none; margin-top: 10px;">Reconectar Pasta Guardada</button>
         <div id="loading-msg" style="display:none; color: var(--secondary); margin-top: 20px;">A analisar ficheiros e pastas...</div>
     </div>
 
